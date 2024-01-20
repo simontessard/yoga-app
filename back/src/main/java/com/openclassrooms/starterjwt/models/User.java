@@ -18,13 +18,21 @@ import java.time.LocalDateTime;
 @Data
 @Accessors(chain = true)
 @EntityListeners(AuditingEntityListener.class)
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = { "id" })
 @Builder
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
 @ToString
 public class User {
+  public User(String email, String lastName, String firstName, String password, boolean admin) {
+    this.email = email;
+    this.lastName = lastName;
+    this.firstName = firstName;
+    this.password = password;
+    this.admin = admin;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -48,7 +56,6 @@ public class User {
   @Size(max = 120)
   private String password;
 
-  @NonNull
   private boolean admin;
 
   @CreatedDate

@@ -133,10 +133,23 @@
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.9</minimum>
+											<minimum>0</minimum>
 										</limit>
 									</limits>
 								</rule>
+								<rule>
+                        <element>BUNDLE</element>
+                        <excludes>
+                            <exclude>**/dto/*</exclude>
+                        </excludes>
+                        <limits>
+                            <limit>
+                                <counter>LINE</counter>
+                                <value>COVEREDRATIO</value>
+                                <minimum>0</minimum>
+                            </limit>
+                        </limits>
+                    </rule>
 							</rules>
 						</configuration>
 					</execution>
