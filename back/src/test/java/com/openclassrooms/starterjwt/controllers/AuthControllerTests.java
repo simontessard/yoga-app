@@ -123,8 +123,7 @@ public class AuthControllerTests {
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(signupRequest)))
-                .andExpect(result -> {
-                    assertThat(result.getResponse().getStatus()).as("Status should be OK").isEqualTo(200);
-                });
+                .andExpect(status().isOk()) // Code 200 OK
+                .andExpect(jsonPath("$.message", is("User registered successfully!"))); // Token is not empty
     }
 }
