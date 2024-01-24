@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -58,14 +59,14 @@ public class AuthControllerTests {
     @MockBean
     private UserRepository userRepository;
 
-    private LoginRequest loginRequest;
+    private LoginRequest validloginRequest;
     private SignupRequest signupRequest;
 
     @BeforeEach
-    public void setUp() {
-        loginRequest = new LoginRequest();
-        loginRequest.setEmail("yoga@studio.com");
-        loginRequest.setPassword("test!1234");
+    public void setUpForValidTests() {
+        LoginRequest validloginRequest = new LoginRequest();
+        validloginRequest.setEmail("yoga@studio.com");
+        validloginRequest.setPassword("test!1234");
 
         signupRequest = new SignupRequest();
         signupRequest.setEmail("test@test.com");
@@ -74,6 +75,8 @@ public class AuthControllerTests {
         signupRequest.setPassword("password");
 
         Authentication mockAuthentication = Mockito.mock(Authentication.class);
+        // Mock object for UserDetails. This is used to simulate the real UserDetails
+        // object in tests.
         UserDetailsImpl mockUserDetails = Mockito.mock(UserDetailsImpl.class);
         User mockUser = new User("yoga@studio.com", "Test", "User", "password", false);
 
@@ -88,12 +91,31 @@ public class AuthControllerTests {
     }
 
     @Test
-    public void testAuthenticateUser() throws Exception {
+    public void testValidAuthenticateUser() throws Exception {
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
+                .content(objectMapper.writeValueAsString(validloginRequest)))
                 .andExpect(status().isOk()) // Code 200 OK
                 .andExpect(jsonPath("$.token", not(is(emptyString())))); // Token is not empty
+    }
+
+    @Test
+    public void testInvalidAuthenticateUser() throws Exception {
+        LoginRequest invalidLoginRequest = new LoginRequest();
+        invalidLoginRequest.setEmail("invalidEmail@test.fr"); // This email is not valid
+        invalidLoginRequest.setPassword("1234566");
+
+        // Configuration mocks for failed authentication
+        Mockito.when(authenticationManager.authenticate(any()))
+                .thenThrow(new BadCredentialsException("Bad credentials"));
+        Mockito.when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(invalidLoginRequest)))
+                .andExpect(status().isUnauthorized()) // Code 401 Unauthorized
+                .andExpect(jsonPath("$.error", is("Unauthorized"))) // Error message is "Unauthorized"
+                .andExpect(jsonPath("$.message", is("Bad credentials"))); // Message is "Bad credentials"
     }
 
     @Test
