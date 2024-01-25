@@ -36,6 +36,15 @@ public class UserTests {
     }
 
     @Test
+    public void testFourArgConstructor() {
+        User user = new User("john.doe@gmail.com", "Doe", "John", "password");
+        assertEquals("john.doe@gmail.com", user.getEmail());
+        assertEquals("Doe", user.getLastName());
+        assertEquals("John", user.getFirstName());
+        assertEquals("password", user.getPassword());
+    }
+
+    @Test
     public void testUserEqualsAndHashCode() {
         User user2 = new User("simon.durand@gmail.com", "Durand", "Simon", "password", true);
         assertEquals(user, user2);
