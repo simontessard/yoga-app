@@ -150,9 +150,7 @@ public class SessionControllerTests {
     @Test
     @WithMockUser(username = "yoga@studio.com", password = "test!1234")
     public void testUpdateSession() throws Exception {
-        // Create a new teacher object
-        Teacher teacher = new Teacher();
-        teacher.setId(1L);
+        Teacher teacher = Teacher.builder().id(1L).build();
         // Create a new session object
         Session session = new Session();
         session.setId(1L);
@@ -176,8 +174,7 @@ public class SessionControllerTests {
         mockMvc.perform(put("/api/session/" + session.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
-                        "{\"name\":\"Zumba Updated\",\"date\":\"2024-01-13T00:00:00\",\"description\":\"Carnaval Updated\",\"teacher_id\":1}")) // Add
-                                                                                                                                                // \"teacher_id\":1
+                        "{\"name\":\"Zumba Updated\",\"date\":\"2024-01-13T00:00:00\",\"description\":\"Carnaval Updated\",\"teacher_id\":1}"))
                 .andExpect(status().isOk());
     }
 }
