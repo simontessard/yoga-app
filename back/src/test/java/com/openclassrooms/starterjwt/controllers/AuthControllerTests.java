@@ -32,7 +32,6 @@ import static org.hamcrest.Matchers.emptyString;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -59,15 +58,10 @@ public class AuthControllerTests {
     @MockBean
     private UserRepository userRepository;
 
-    private LoginRequest validloginRequest;
     private SignupRequest signupRequest;
 
     @BeforeEach
     public void setUpForValidTests() {
-        LoginRequest validloginRequest = new LoginRequest();
-        validloginRequest.setEmail("yoga@studio.com");
-        validloginRequest.setPassword("test!1234");
-
         signupRequest = new SignupRequest();
         signupRequest.setEmail("test@test.com");
         signupRequest.setFirstName("Test");
@@ -92,6 +86,10 @@ public class AuthControllerTests {
 
     @Test
     public void testValidAuthenticateUser() throws Exception {
+        LoginRequest validloginRequest = new LoginRequest();
+        validloginRequest.setEmail("yoga@studio.com");
+        validloginRequest.setPassword("test!1234");
+
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validloginRequest)))
