@@ -47,4 +47,45 @@ public class UserTests {
         String expected = "User(id=null, email=simon.durand@gmail.com, lastName=Durand, firstName=Simon, password=password, admin=true, createdAt=null, updatedAt=null)";
         assertEquals(expected, user.toString());
     }
+
+    @Test
+    public void testNoArgsConstructor() {
+        User user = new User();
+        assertNull(user.getFirstName());
+        assertNull(user.getLastName());
+        assertNull(user.getEmail());
+    }
+
+    @Test
+    public void testRequiredArgsConstructor() {
+        User user = new User();
+        user.setFirstName("John");
+        assertEquals("John", user.getFirstName());
+        assertNull(user.getLastName());
+        assertNull(user.getEmail());
+    }
+
+    @Test
+    public void testAllArgsConstructor() {
+        User user = new User();
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setEmail("john.doe@example.com");
+        assertEquals("John", user.getFirstName());
+        assertEquals("Doe", user.getLastName());
+        assertEquals("john.doe@example.com", user.getEmail());
+    }
+
+    @Test
+    public void testBuilder() {
+        User user = User.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .password("johntest")
+                .build();
+        assertEquals("John", user.getFirstName());
+        assertEquals("Doe", user.getLastName());
+        assertEquals("john.doe@example.com", user.getEmail());
+    }
 }
