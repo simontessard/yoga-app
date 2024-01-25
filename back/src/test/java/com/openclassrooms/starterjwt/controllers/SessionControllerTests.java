@@ -1,5 +1,8 @@
 package com.openclassrooms.starterjwt.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.openclassrooms.starterjwt.dto.SessionDto;
 import com.openclassrooms.starterjwt.mapper.SessionMapper;
 import com.openclassrooms.starterjwt.models.Session;
@@ -18,13 +21,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -96,28 +103,22 @@ public class SessionControllerTests {
     }
 
     @Test
-    @WithMockUser(username = "yoga@studio.com", password = "test!1234")
-    public void testCreateSession() throws Exception {
-        // Create a new teacher object
-        Teacher teacher = new Teacher();
-        teacher.setId(1L);
+    public void testCreateSession() {
+        String name = "Zumba Session";
+        Session session = Session.builder().name(name).build();
 
-        // Create a new session object
-        Session newSession = new Session();
-        newSession.setName("Zumba");
-        newSession.setCreatedAt(LocalDateTime.parse("2024-01-13T00:00:00"));
-        newSession.setDescription("Carnaval");
-        newSession.setTeacher(teacher);
+        SessionDto sessionDto = new SessionDto();
+        sessionDto.setName(name);
 
-        // Mock sessionService to return the new session when save is called
-        Mockito.when(sessionService.create(any(Session.class))).thenReturn(newSession);
+        when(sessionMapper.toEntity(sessionDto)).thenReturn(session);
+        when(sessionService.create(session)).thenReturn(session);
+        when(sessionMapper.toDto(session)).thenReturn(sessionDto);
 
-        // Perform the POST request
-        mockMvc.perform(post("/api/session")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                        "{\"name\":\"Zumba\",\"date\":\"2024-01-13T00:00:00\",\"description\":\"Carnaval\",\"teacher_id\":1}"))
-                .andExpect(status().isOk());
+        SessionController sessionController = new SessionController(sessionService, sessionMapper);
+        ResponseEntity<?> responseEntity = sessionController.create(sessionDto);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(sessionDto, responseEntity.getBody());
     }
 
     @Test
