@@ -1,7 +1,9 @@
 package com.openclassrooms.starterjwt.controllers;
 
+import com.openclassrooms.starterjwt.dto.SessionDto;
 import com.openclassrooms.starterjwt.mapper.SessionMapper;
 import com.openclassrooms.starterjwt.models.Session;
+import com.openclassrooms.starterjwt.models.Teacher;
 import com.openclassrooms.starterjwt.repository.SessionRepository;
 import com.openclassrooms.starterjwt.security.jwt.JwtUtils;
 import com.openclassrooms.starterjwt.services.SessionService;
@@ -22,9 +24,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.time.LocalDateTime;
 
 import org.springframework.security.core.Authentication;
 
@@ -88,5 +93,90 @@ public class SessionControllerTests {
         mockMvc.perform(get("/api/session")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(username = "yoga@studio.com", password = "test!1234")
+    public void testCreateSession() throws Exception {
+        // Create a new teacher object
+        Teacher teacher = new Teacher();
+        teacher.setId(1L);
+
+        // Create a new session object
+        Session newSession = new Session();
+        newSession.setName("Zumba");
+        newSession.setCreatedAt(LocalDateTime.parse("2024-01-13T00:00:00"));
+        newSession.setDescription("Carnaval");
+        newSession.setTeacher(teacher);
+
+        // Mock sessionService to return the new session when save is called
+        Mockito.when(sessionService.create(any(Session.class))).thenReturn(newSession);
+
+        // Perform the POST request
+        mockMvc.perform(post("/api/session")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                        "{\"name\":\"Zumba\",\"date\":\"2024-01-13T00:00:00\",\"description\":\"Carnaval\",\"teacher_id\":1}"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "yoga@studio.com", password = "test!1234")
+    public void testDeleteSession() throws Exception {
+        // Create a new session object
+        Session session = new Session();
+        session.setId(1L);
+        session.setName("Zumba");
+        session.setCreatedAt(LocalDateTime.parse("2024-01-13T00:00:00"));
+        session.setDescription("Carnaval");
+
+        // Mock sessionService to return the session when getById is called
+        Mockito.when(sessionService.getById(any(Long.class))).thenReturn(session);
+
+        // Mock sessionService to do nothing when delete is called
+        Mockito.doNothing().when(sessionService).delete(any(Long.class));
+
+        // Perform the DELETE request
+        mockMvc.perform(delete("/api/session/" + session.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        // Verify that sessionService.getById and sessionService.delete were called
+        Mockito.verify(sessionService, times(1)).getById(session.getId());
+        Mockito.verify(sessionService, times(1)).delete(session.getId());
+    }
+
+    @Test
+    @WithMockUser(username = "yoga@studio.com", password = "test!1234")
+    public void testUpdateSession() throws Exception {
+        // Create a new teacher object
+        Teacher teacher = new Teacher();
+        teacher.setId(1L);
+        // Create a new session object
+        Session session = new Session();
+        session.setId(1L);
+        session.setName("Zumba");
+        session.setCreatedAt(LocalDateTime.parse("2024-01-13T00:00:00"));
+        session.setDescription("Carnaval");
+        session.setTeacher(teacher);
+
+        // Create a session DTO object
+        SessionDto sessionDto = new SessionDto();
+        sessionDto.setName("Zumba Updated");
+        sessionDto.setDescription("Carnaval Updated");
+
+        // Mock sessionService to return the updated session when update is called
+        Mockito.when(sessionService.update(any(Long.class), any(Session.class))).thenReturn(session);
+
+        // Mock sessionMapper to return the sessionDto when toDto is called
+        Mockito.when(sessionMapper.toDto(any(Session.class))).thenReturn(sessionDto);
+
+        // Perform the PUT request
+        mockMvc.perform(put("/api/session/" + session.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                        "{\"name\":\"Zumba Updated\",\"date\":\"2024-01-13T00:00:00\",\"description\":\"Carnaval Updated\",\"teacher_id\":1}")) // Add
+                                                                                                                                                // \"teacher_id\":1
+                .andExpect(status().isOk());
     }
 }
