@@ -26,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.emptyString;
@@ -118,6 +119,14 @@ public class AuthControllerTests {
 
     @Test
     public void testRegisterUser() throws Exception {
+        // Checking if the request body is correctly mapped to the SignupRequest object
+        SignupRequest expectedSignupRequest = new SignupRequest();
+        expectedSignupRequest.setEmail("test@test.com");
+        expectedSignupRequest.setFirstName("Test");
+        expectedSignupRequest.setLastName("User");
+        expectedSignupRequest.setPassword("password");
+        assertEquals(expectedSignupRequest, signupRequest);
+
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(signupRequest)))
