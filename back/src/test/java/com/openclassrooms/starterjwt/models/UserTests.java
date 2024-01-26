@@ -58,6 +58,14 @@ public class UserTests {
     }
 
     @Test
+    public void testUserBuilderToString() {
+        String userBuilder = User.builder().toString();
+
+        String expectedUserBuilder = "User.UserBuilder(id=null, email=null, lastName=null, firstName=null, password=null, admin=false, createdAt=null, updatedAt=null)";
+        assertEquals(expectedUserBuilder, userBuilder);
+    }
+
+    @Test
     public void testNoArgsConstructor() {
         User user = new User();
         assertNull(user.getFirstName());

@@ -70,4 +70,14 @@ public class SessionTests {
                 + ", description=Test Description, teacher=null, users=null, createdAt=null, updatedAt=null)";
         assertEquals(expected, session.toString());
     }
+
+    @Test
+    public void testSessionBuilderToString() {
+        String sessionBuilder = Session.builder().toString();
+
+        String expectedSessionBuilder = "Session.SessionBuilder(id=" + null + ", name=" + null + ", date=" + null
+                + ", description=" + null + ", teacher=" + null + ", users=" + null + ", createdAt=" + null
+                + ", updatedAt=" + null + ")";
+        assertEquals(expectedSessionBuilder, sessionBuilder);
+    }
 }
