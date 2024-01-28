@@ -1,8 +1,5 @@
 package com.openclassrooms.starterjwt.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.openclassrooms.starterjwt.dto.SessionDto;
 import com.openclassrooms.starterjwt.mapper.SessionMapper;
 import com.openclassrooms.starterjwt.models.Session;
@@ -30,7 +27,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -176,5 +175,35 @@ public class SessionControllerTests {
                 .content(
                         "{\"name\":\"Zumba Updated\",\"date\":\"2024-01-13T00:00:00\",\"description\":\"Carnaval Updated\",\"teacher_id\":1}"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "yoga@studio.com", password = "test!1234")
+    public void testParticipate() throws Exception {
+        Long sessionId = 1L;
+        Long userId = 2L;
+
+        doNothing().when(sessionService).participate(sessionId, userId);
+
+        mockMvc.perform(post("/api/session/" + sessionId + "/participate/" + userId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(sessionService, times(1)).participate(sessionId, userId);
+    }
+
+    @Test
+    @WithMockUser(username = "yoga@studio.com", password = "test!1234")
+    public void testNoLongerParticipate() throws Exception {
+        Long sessionId = 1L;
+        Long userId = 2L;
+
+        doNothing().when(sessionService).noLongerParticipate(sessionId, userId);
+
+        mockMvc.perform(delete("/api/session/" + sessionId + "/participate/" + userId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(sessionService, times(1)).noLongerParticipate(sessionId, userId);
     }
 }
