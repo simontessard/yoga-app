@@ -108,29 +108,31 @@ describe('Sessions', () => {
     cy.get('button[data-testid=delete-button]').click();
   });
 
-  //   it('creates a session', () => {
-  //     cy.get('button[data-testid=create-button-admin]').click();
-  //     cy.url().should('include', '/sessions/create');
+  it('creates a session', () => {
+    cy.get('button[data-testid=create-button-admin]').click();
+    cy.url().should('include', '/sessions/create');
 
-  //     cy.get('input[formControlName=name]').type('New Session');
-  //     cy.get('input[formControlName=date]').type('2022-12-31');
-  //     cy.get('mat-select[formControlName=teacher_id]')
-  //       .click()
-  //       .get('mat-option')
-  //       .contains('Margot DELAHAYE')
-  //       .click();
-  //     cy.get('textarea[formControlName=description]').type(
-  //       'This is a new session.'
-  //     );
-  //     cy.get('button[type=submit]').click();
+    cy.get('.create mat-card-title').contains('Create session').should('exist');
 
-  //     cy.url().should('include', '/sessions');
-  //     cy.get('.item')
-  //       .last()
-  //       .within(() => {
-  //         cy.get('mat-card-title').should('contain', 'New Session');
-  //       });
-  //   });
+    cy.get('input[formControlName=name]').type('New Session');
+    cy.get('input[formControlName=date]').type('2022-12-31');
+    // cy.get('mat-select[formControlName="teacher_id"]')
+    //   .click()
+    //   .get('mat-option')
+    //   .contains('Margot DELAHAYE')
+    //   .click();
+    cy.get('textarea[formControlName=description]').type(
+      'This is a new session.'
+    );
+    cy.get('button[type=submit]').should('be.disabled');
+
+    // cy.url().should('include', '/sessions');
+    // cy.get('.item')
+    //   .last()
+    //   .within(() => {
+    //     cy.get('mat-card-title').should('contain', 'New Session');
+    //   });
+  });
 
   //   it('edits a session', () => {
   //     cy.get('.item')
