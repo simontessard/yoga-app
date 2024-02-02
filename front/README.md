@@ -20,30 +20,28 @@ Launch Front-end:
 
 > npm run start;
 
-
 ## Ressources
 
-### Mockoon env 
+### Mockoon env
 
 ### Postman collection
 
 For Postman import the collection
 
-> ressources/postman/yoga.postman_collection.json 
+> ressources/postman/yoga.postman_collection.json
 
-by following the documentation: 
+by following the documentation:
 
 https://learning.postman.com/docs/getting-started/importing-and-exporting-data/#importing-data-into-postman
-
 
 ### MySQL
 
 SQL script for creating the schema is available `ressources/sql/script.sql`
 
 By default the admin account is:
+
 - login: yoga@studio.com
 - password: test!1234
-
 
 ### Test
 
@@ -51,7 +49,7 @@ By default the admin account is:
 
 Launching e2e test:
 
-> npm run e2e
+> npm run e2e:ci
 
 Generate coverage report (you should launch e2e test before):
 
