@@ -91,4 +91,22 @@ describe('Login spec', () => {
     cy.get('button[data-testid=create-button-admin]').should('not.exist');
     cy.get('button[data-testid=edit-button-admin]').should('not.exist');
   });
+
+  it('login displays an error message', () => {
+    cy.visit('/login');
+
+    cy.intercept('POST', '/api/auth/login', {
+      statusCode: 401,
+      body: {
+        error: 'Unauthorized',
+      },
+    });
+
+    cy.get('input[formControlName=email]').type('wrong@studio.com');
+    cy.get('input[formControlName=password]').type(
+      `${'wrongpassword'}{enter}{enter}`
+    );
+
+    cy.get('p.error').should('be.visible').and('contain', 'An error occurred');
+  });
 });
