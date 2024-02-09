@@ -15,12 +15,15 @@ import { AuthService } from '../../services/auth.service';
 import { LoginRequest } from '../../interfaces/loginRequest.interface';
 
 import { LoginComponent } from './login.component';
+import { AuthGuard } from 'src/app/guards/auth.guard';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let mockSessionService: jest.Mocked<SessionService>;
   let mockRouter: Router;
+  let guard: AuthGuard;
+  let sessionService: SessionService;
 
   mockRouter = {
     navigate: jest.fn(),
@@ -30,11 +33,15 @@ describe('LoginComponent', () => {
     login: jest.fn(),
   };
 
+  const sessionServiceMock = { isLogged: false };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [LoginComponent],
       providers: [
+        AuthGuard,
         { provide: SessionService, useValue: mockSessionService },
+        { provide: SessionService, useValue: sessionServiceMock },
         { provide: Router, useValue: mockRouter },
         { provide: AuthService, useValue: mockAuthService },
       ],
@@ -52,6 +59,7 @@ describe('LoginComponent', () => {
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    guard = TestBed.inject(AuthGuard);
   });
 
   it('should successfully created', () => {
@@ -73,6 +81,17 @@ describe('LoginComponent', () => {
     component.submit();
     expect(errorSpy).toHaveBeenCalled;
     expect(component.onError).toBeTruthy();
+  });
+
+  it('should redirect to login and return false when not logged in', () => {
+    expect(guard.canActivate()).toBe(false);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['login']);
+  });
+
+  it('should return true when logged in', () => {
+    sessionServiceMock.isLogged = true;
+
+    expect(guard.canActivate()).toBe(true);
   });
 
   describe('submit', () => {
