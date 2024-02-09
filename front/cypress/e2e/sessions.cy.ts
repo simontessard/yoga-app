@@ -37,6 +37,16 @@ describe('Sessions', () => {
       ],
     });
 
+    cy.intercept('GET', '/api/teacher', {
+      body: [
+        {
+          id: 2,
+          firstName: 'Hélène',
+          lastName: 'THIERCELIN',
+        },
+      ],
+    });
+
     cy.get('input[formControlName=email]').type('yoga@studio.com');
     cy.get('input[formControlName=password]').type(
       `${'test!1234'}{enter}{enter}`
@@ -81,8 +91,8 @@ describe('Sessions', () => {
     cy.intercept('GET', '/api/teacher/1', {
       body: {
         id: 1,
-        lastName: 'DELAHAYE',
-        firstName: 'Margot',
+        lastName: 'THIERCELIN',
+        firstName: 'Hélène',
         createdAt: '2024-01-20T19:12:50',
         updatedAt: '2024-01-25T16:49:23',
       },
@@ -98,7 +108,7 @@ describe('Sessions', () => {
 
     // Check that the session details are displayed correctly
     cy.get('mat-card-title h1').should('contain', 'Session 1');
-    cy.get('mat-card-subtitle span').should('contain', 'Margot DELAHAYE');
+    cy.get('mat-card-subtitle span').should('contain', 'Hélène THIERCELIN');
     cy.get('mat-card-content .description').should('contain', '21');
     cy.get('mat-card-content div[fxLayoutAlign="start center"] span').should(
       'contain',
@@ -116,15 +126,16 @@ describe('Sessions', () => {
 
     cy.get('input[formControlName=name]').type('New Session');
     cy.get('input[formControlName=date]').type('2022-12-31');
-    // cy.get('mat-select[formControlName="teacher_id"]')
-    //   .click()
-    //   .get('mat-option')
-    //   .contains('Margot DELAHAYE')
-    //   .click();
+    cy.get('mat-select[formControlName="teacher_id"]')
+      .click()
+      .get('mat-option')
+      .contains('Hélène THIERCELIN')
+      .click();
     cy.get('textarea[formControlName=description]').type(
       'This is a new session.'
     );
-    cy.get('button[type=submit]').should('be.disabled');
+    cy.get('button[type=submit]').should('not.be.disabled');
+    cy.get('button[type=submit]').click();
 
     // cy.url().should('include', '/sessions');
     // cy.get('.item')
