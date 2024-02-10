@@ -35,7 +35,7 @@ npm run test
 ```sh
 npm run e2e:coverage
 ```
-- Available here : front/coverage/lcov-report/index.html
+- Available here : <b>front/coverage/lcov-report/index.html</b>
 
 > Jest :
 ```sh
