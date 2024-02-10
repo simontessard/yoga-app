@@ -31,13 +31,13 @@ npm run test
 
 ### III. Rapport de couverture :
 
-1. End-to-end :
+> End-to-end :
 ```sh
 npm run e2e:coverage
 ```
 - Available here : front/coverage/lcov-report/index.html
 
-1. Jest :
+> Jest :
 ```sh
 node_modules/.bin/jest --coverage
 ```
@@ -45,5 +45,9 @@ node_modules/.bin/jest --coverage
 ## Back-end
 
 Le back-end de l'application est développé en Java Spring.
+
+```sh
+mvn clean test
+```
 
 
