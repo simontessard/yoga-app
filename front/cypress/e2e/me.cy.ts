@@ -80,5 +80,10 @@ describe('me spec', () => {
       status: 200,
     });
     cy.get('button[data-testid=delete-button]').click();
+    cy.clock(); // To prevent the snackbar to disappear
+    cy.contains(
+      '.mat-simple-snack-bar-content',
+      'Your account has been deleted !'
+    );
   });
 });

@@ -145,17 +145,45 @@ describe('Sessions', () => {
     //   });
   });
 
-  //   it('edits a session', () => {
-  //     cy.get('.item')
-  //       .first()
-  //       .find('button[data-testid=edit-button-admin]')
-  //       .click();
-  //     cy.url().should('include', '/sessions/update');
+  it('edits a session', () => {
+    cy.intercept('GET', '/api/session/1', {
+      body: {
+        id: 1,
+        name: 'Session 1',
+        date: '2000-03-31T00:00:00.000+00:00',
+        teacher_id: 1,
+        description: '21',
+        users: [],
+        createdAt: '2024-01-20T19:12:50',
+        updatedAt: '2024-01-25T16:49:23',
+      },
+    });
 
-  //     cy.get('input[name=name]').clear().type('Updated Session');
-  //     cy.get('button[type=submit]').click();
+    cy.intercept('GET', '/api/teacher', {
+      body: [
+        {
+          id: 1,
+          firstName: 'Margot',
+          lastName: 'DELAHAYE',
+        },
+      ],
+    });
 
-  //     cy.url().should('include', '/sessions');
-  //     cy.get('.item').first().should('contain', 'Updated Session');
-  //   });
+    cy.get('.item')
+      .first()
+      .find('button[data-testid=edit-button-admin]')
+      .click();
+    cy.url().should('include', '/sessions/update');
+
+    cy.get('input[formControlName=name]').clear().type('Update Session Name');
+    cy.get('textarea[formControlName=description]').clear();
+    cy.get('button[type=submit]').should('be.disabled');
+    cy.get('textarea[formControlName=description]').type(
+      'This is an updated session.'
+    );
+    cy.get('button[type=submit]').click();
+
+    cy.url().should('include', '/sessions');
+    cy.visit('/sessions');
+  });
 });
