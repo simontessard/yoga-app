@@ -46,8 +46,12 @@ node_modules/.bin/jest --coverage
 
 Le back-end de l'application est développé en Java Spring.
 
+Installer la base de données en exécutant le script SQL se trouvant dans le dossier ressources.
+
 ```sh
 mvn clean test
 ```
+
+- Available here : <b>back/target/site/index.html</b>
 
 
